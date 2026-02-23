@@ -401,10 +401,18 @@ async function init() {
   }
 }
 
-searchInputEl.addEventListener("input", (e) => {
+function debounce(fn, ms) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
+
+searchInputEl.addEventListener("input", debounce((e) => {
   state.query = e.target.value;
   renderList();
-});
+}, 300));
 
 siteSelectEl.addEventListener("change", (e) => {
   state.siteFilter = e.target.value;
