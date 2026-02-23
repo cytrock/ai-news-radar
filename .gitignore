@@ -4,3 +4,8 @@ __pycache__/
 .DS_Store
 feeds/*.opml
 !feeds/*.example.opml
+data/archive.json
+data/latest-24h.json
+data/source-status.json
+data/title-zh-cache.json
+data/waytoagi-7d.json
