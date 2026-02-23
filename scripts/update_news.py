@@ -1447,30 +1447,44 @@ def collect_all(session: requests.Session, now: datetime) -> tuple[list[RawItem]
         ("newsnow", "NewsNow", fetch_newsnow),
     ]
 
-    raw_items: list[RawItem] = []
-    statuses: list[dict[str, Any]] = []
-
-    for site_id, site_name, fn in tasks:
+    def run_task(
+        site_id: str, site_name: str, fn: Any
+    ) -> tuple[str, list[RawItem], dict[str, Any]]:
         start = time.perf_counter()
         error = None
-        count = 0
+        items: list[RawItem] = []
         try:
             items = fn(session, now)
-            count = len(items)
-            raw_items.extend(items)
         except Exception as exc:
             error = str(exc)
         elapsed_ms = int((time.perf_counter() - start) * 1000)
-        statuses.append(
-            {
-                "site_id": site_id,
-                "site_name": site_name,
-                "ok": error is None,
-                "item_count": count,
-                "duration_ms": elapsed_ms,
-                "error": error,
-            }
-        )
+        status = {
+            "site_id": site_id,
+            "site_name": site_name,
+            "ok": error is None,
+            "item_count": len(items),
+            "duration_ms": elapsed_ms,
+            "error": error,
+        }
+        return site_id, items, status
+
+    results: dict[str, tuple[list[RawItem], dict[str, Any]]] = {}
+    with ThreadPoolExecutor(max_workers=len(tasks)) as executor:
+        futures = {
+            executor.submit(run_task, site_id, site_name, fn): site_id
+            for site_id, site_name, fn in tasks
+        }
+        for future in as_completed(futures):
+            site_id, items, status = future.result()
+            results[site_id] = (items, status)
+
+    # 按原始顺序汇总，保证 statuses 顺序稳定
+    raw_items: list[RawItem] = []
+    statuses: list[dict[str, Any]] = []
+    for site_id, _, _ in tasks:
+        items, status = results[site_id]
+        raw_items.extend(items)
+        statuses.append(status)
 
     return raw_items, statuses
 
