@@ -2090,6 +2090,13 @@ def main() -> int:
         item_id = make_item_id(raw.site_id, raw.source, title, url)
         seen_this_run.add(item_id)
 
+        # Cap future timestamps: some sources (e.g. NewsNow updatedTime) can return
+        # timestamps slightly ahead of now due to server clock skew or timezone
+        # mismatches; clamp them to now so we never store a future published_at.
+        clamped_published = raw.published_at
+        if clamped_published and clamped_published > now:
+            clamped_published = now
+
         existing = archive.get(item_id)
         if existing is None:
             archive[item_id] = {
@@ -2099,7 +2106,7 @@ def main() -> int:
                 "source": raw.source,
                 "title": title,
                 "url": url,
-                "published_at": iso(raw.published_at),
+                "published_at": iso(clamped_published),
                 "first_seen_at": iso(now),
                 "last_seen_at": iso(now),
             }
@@ -2109,10 +2116,10 @@ def main() -> int:
             existing["source"] = raw.source
             existing["title"] = title
             existing["url"] = url
-            if raw.published_at:
+            if clamped_published:
                 # OPML RSS may fix previously wrong publish times; allow overwrite.
                 if raw.site_id == "opmlrss" or not existing.get("published_at"):
-                    existing["published_at"] = iso(raw.published_at)
+                    existing["published_at"] = iso(clamped_published)
             existing["last_seen_at"] = iso(now)
 
     # Prune old archive
