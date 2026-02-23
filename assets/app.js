@@ -45,6 +45,7 @@ function fmtTime(iso) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "时间未知";
   return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
@@ -54,9 +55,10 @@ function fmtTime(iso) {
 
 function fmtDate(iso) {
   if (!iso) return "未知日期";
-  const d = new Date(`${iso}T00:00:00`);
+  const d = new Date(`${iso}T00:00:00+08:00`);
   if (Number.isNaN(d.getTime())) return iso;
   return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Shanghai",
     month: "2-digit",
     day: "2-digit",
   }).format(d);

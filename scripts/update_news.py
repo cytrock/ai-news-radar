@@ -257,6 +257,9 @@ def parse_relative_time_zh(text: str, now: datetime) -> datetime | None:
     if not text:
         return None
 
+    # 中文相对时间均以上海时区为基准
+    now_sh = now.astimezone(SH_TZ)
+
     m = re.search(r"(\d+)\s*分钟前", text)
     if m:
         return now - timedelta(minutes=int(m.group(1)))
@@ -279,27 +282,27 @@ def parse_relative_time_zh(text: str, now: datetime) -> datetime | None:
     if m:
         hour = int(m.group(1))
         minute = int(m.group(2))
-        candidate = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-        if candidate > now + timedelta(minutes=5):
+        candidate = now_sh.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        if candidate > now_sh + timedelta(minutes=5):
             candidate -= timedelta(days=1)
-        return candidate
+        return candidate.astimezone(UTC)
 
     m = re.fullmatch(r"昨天\s*(\d{1,2}):(\d{2})", text)
     if m:
         hour = int(m.group(1))
         minute = int(m.group(2))
-        return (now - timedelta(days=1)).replace(hour=hour, minute=minute, second=0, microsecond=0)
+        return (now_sh - timedelta(days=1)).replace(hour=hour, minute=minute, second=0, microsecond=0).astimezone(UTC)
 
     m = re.fullmatch(r"(?:\d{4}年\s*)?(\d{1,2})月(\d{1,2})日", text)
     if m:
         month = int(m.group(1))
         day = int(m.group(2))
-        year = now.year
+        year = now_sh.year
         try:
-            candidate = datetime(year, month, day, tzinfo=UTC)
-            if candidate > now + timedelta(days=2):
-                candidate = datetime(year - 1, month, day, tzinfo=UTC)
-            return candidate
+            candidate = datetime(year, month, day, tzinfo=SH_TZ)
+            if candidate > now_sh + timedelta(days=2):
+                candidate = datetime(year - 1, month, day, tzinfo=SH_TZ)
+            return candidate.astimezone(UTC)
         except Exception:
             return None
 
