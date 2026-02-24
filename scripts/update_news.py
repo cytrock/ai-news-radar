@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import lru_cache
 import hashlib
 import json
 import random
@@ -30,6 +31,12 @@ except ModuleNotFoundError:
     feedparser = None
 
 UTC = timezone.utc
+
+# Pre-compiled regexes for hot paths called on every news item
+_RE_MOJIBAKE_CHECK = re.compile(r"[Ãâåèæïð]|[\x80-\x9f]|æ|ç|å|é")
+_RE_MOJIBAKE_NOISE = re.compile(r"(Ã|Â|â€|æ·|�)")
+_RE_CJK = re.compile(r"[\u4e00-\u9fff]")
+_RE_ALPHA = re.compile(r"[A-Za-z]")
 BROWSER_UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
@@ -103,6 +110,7 @@ def parse_iso(dt_str: str | None) -> datetime | None:
     return dt.astimezone(UTC)
 
 
+@lru_cache(maxsize=2048)
 def normalize_url(raw_url: str) -> str:
     try:
         parsed = urlparse(raw_url.strip())
@@ -161,7 +169,7 @@ def maybe_fix_mojibake(text: str) -> str:
     if not s:
         return s
     # Common mojibake signature from UTF-8 bytes decoded as Latin-1.
-    if re.search(r"[Ãâåèæïð]|[\x80-\x9f]|æ|ç|å|é", s) is None:
+    if _RE_MOJIBAKE_CHECK.search(s) is None:
         return s
     for enc in ("latin1", "cp1252"):
         try:
@@ -174,7 +182,7 @@ def maybe_fix_mojibake(text: str) -> str:
 
 
 def has_cjk(text: str) -> bool:
-    return bool(re.search(r"[\u4e00-\u9fff]", text or ""))
+    return bool(_RE_CJK.search(text or ""))
 
 
 def is_mostly_english(text: str) -> bool:
@@ -183,7 +191,7 @@ def is_mostly_english(text: str) -> bool:
         return False
     if has_cjk(s):
         return False
-    letters = re.findall(r"[A-Za-z]", s)
+    letters = _RE_ALPHA.findall(s)
     return len(letters) >= max(6, len(s) // 4)
 
 
@@ -1851,7 +1859,7 @@ def contains_any_keyword(haystack: str, keywords: list[str]) -> bool:
 def has_mojibake_noise(text: str) -> bool:
     if not text:
         return False
-    return bool(re.search(r"(Ã|Â|â€|æ·|�)", text))
+    return bool(_RE_MOJIBAKE_NOISE.search(text))
 
 
 def normalize_source_for_display(site_id: str, source: str, url: str) -> str:
