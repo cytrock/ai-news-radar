@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-02-26T21:30:39.863619Z",
+  "generated_at": "2026-02-26T22:31:46.617663Z",
   "sites": [
     {
       "site_id": "techurls",
       "site_name": "TechURLs",
       "ok": true,
       "item_count": 405,
-      "duration_ms": 612,
+      "duration_ms": 583,
       "error": null
     },
     {
@@ -14,31 +14,31 @@
       "site_name": "Buzzing",
       "ok": true,
       "item_count": 744,
-      "duration_ms": 403,
+      "duration_ms": 536,
       "error": null
     },
     {
       "site_id": "iris",
       "site_name": "Info Flow",
       "ok": true,
-      "item_count": 355,
-      "duration_ms": 11007,
+      "item_count": 356,
+      "duration_ms": 11862,
       "error": null
     },
     {
       "site_id": "bestblogs",
       "site_name": "BestBlogs",
-      "ok": true,
-      "item_count": 83,
-      "duration_ms": 14798,
-      "error": null
+      "ok": false,
+      "item_count": 0,
+      "duration_ms": 258155,
+      "error": "HTTPSConnectionPool(host='www.bestblogs.dev', port=443): Max retries exceeded with url: /en/newsletter (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='www.bestblogs.dev', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "site_id": "tophub",
       "site_name": "TopHub",
       "ok": true,
-      "item_count": 3030,
-      "duration_ms": 1971,
+      "item_count": 3029,
+      "duration_ms": 1973,
       "error": null
     },
     {
@@ -46,7 +46,7 @@
       "site_name": "Zeli",
       "ok": true,
       "item_count": 67,
-      "duration_ms": 400,
+      "duration_ms": 581,
       "error": null
     },
     {
@@ -54,7 +54,7 @@
       "site_name": "AI HubToday",
       "ok": true,
       "item_count": 1,
-      "duration_ms": 257,
+      "duration_ms": 200,
       "error": null
     },
     {
@@ -62,7 +62,7 @@
       "site_name": "AIbase",
       "ok": true,
       "item_count": 20,
-      "duration_ms": 1349,
+      "duration_ms": 1522,
       "error": null
     },
     {
@@ -70,15 +70,15 @@
       "site_name": "AI今日热榜",
       "ok": false,
       "item_count": 0,
-      "duration_ms": 425,
+      "duration_ms": 72,
       "error": "403 Client Error: Forbidden for url: https://aihot.today/"
     },
     {
       "site_id": "newsnow",
       "site_name": "NewsNow",
       "ok": true,
-      "item_count": 1401,
-      "duration_ms": 5698,
+      "item_count": 1394,
+      "duration_ms": 2128,
       "error": null
     },
     {
@@ -87,7 +87,7 @@
       "ok": true,
       "partial_failures": 0,
       "item_count": 1667,
-      "duration_ms": 6106,
+      "duration_ms": 6033,
       "error": null,
       "feed_count": 5,
       "effective_feed_count": 5,
@@ -97,14 +97,15 @@
       "replaced_feed_count": 0
     }
   ],
-  "successful_sites": 10,
+  "successful_sites": 9,
   "failed_sites": [
+    "bestblogs",
     "aihot"
   ],
   "zero_item_sites": [],
-  "fetched_raw_items": 7773,
-  "items_before_topic_filter": 14587,
-  "items_in_24h": 1548,
+  "fetched_raw_items": 7683,
+  "items_before_topic_filter": 14574,
+  "items_in_24h": 1515,
   "rss_opml": {
     "enabled": true,
     "path": "feeds/follow.opml",
@@ -124,7 +125,7 @@
         "effective_feed_url": "https://36kr.com/feed",
         "ok": true,
         "item_count": 30,
-        "duration_ms": 1797,
+        "duration_ms": 1726,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -138,7 +139,7 @@
         "effective_feed_url": "https://huggingface.co/blog/feed.xml",
         "ok": true,
         "item_count": 740,
-        "duration_ms": 289,
+        "duration_ms": 290,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -152,7 +153,7 @@
         "effective_feed_url": "https://www.infoq.cn/feed",
         "ok": true,
         "item_count": 20,
-        "duration_ms": 1665,
+        "duration_ms": 1615,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -166,7 +167,7 @@
         "effective_feed_url": "https://openai.com/news/rss.xml",
         "ok": true,
         "item_count": 857,
-        "duration_ms": 620,
+        "duration_ms": 614,
         "error": null,
         "skipped": false,
         "skip_reason": null,
@@ -180,7 +181,7 @@
         "effective_feed_url": "https://www.solidot.org/index.rss",
         "ok": true,
         "item_count": 20,
-        "duration_ms": 1735,
+        "duration_ms": 1788,
         "error": null,
         "skipped": false,
         "skip_reason": null,
